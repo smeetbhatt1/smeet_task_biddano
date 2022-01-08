@@ -10,6 +10,15 @@ class PaymentCardProvider with ChangeNotifier {
   String cvvCode = "";
   bool showFrontSide = true;
 
+  void init() {
+    cardNo = "";
+    imgPathCardType = "";
+    name = "";
+    expDate = "MM/YYYY";
+    cvvCode = "";
+    showFrontSide = true;
+  }
+
   void onCardNumberChanged(String text) {
     cardNo = text;
     CardType cardType = detectCCType(cardNo);
@@ -49,8 +58,8 @@ class PaymentCardProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void switchCardSide() {
-    showFrontSide = !showFrontSide;
+  void switchCardSide(bool isFront) {
+    showFrontSide = isFront;
     notifyListeners();
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smeet_task/payment_card/page/payment_card_page.dart';
+import 'package:smeet_task/payment_card/provider/payment_card_provider.dart';
 import 'package:smeet_task/phone/page/phone_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -25,6 +27,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               child: const Text("UI Test"),
               onPressed: () {
+                Provider.of<PaymentCardProvider>(context, listen: false).init();
                 Navigator.of(context).pushNamed(PaymentCardPage.routeName);
               },
             ),

@@ -18,7 +18,6 @@ class PaymentCardPage extends StatefulWidget {
 }
 
 class _PaymentCardPageState extends State<PaymentCardPage> {
-  bool _showFrontSide = true;
   final _formKey = GlobalKey<FormState>();
   final _cardNumberController = TextEditingController();
   final _cardNumberNode = FocusNode();
@@ -32,7 +31,6 @@ class _PaymentCardPageState extends State<PaymentCardPage> {
   @override
   void initState() {
     super.initState();
-    _showFrontSide = true;
   }
 
   @override
@@ -82,19 +80,20 @@ class _PaymentCardPageState extends State<PaymentCardPage> {
     );
   }
 
-  void _switchCard() {
-    Provider.of<PaymentCardProvider>(context, listen: false).switchCardSide();
+  void _switchCard({required bool isFront}) {
+    Provider.of<PaymentCardProvider>(context, listen: false).switchCardSide(isFront);
   }
 
   Widget _buildFlipAnimation() {
-    return GestureDetector(
-      onTap: _switchCard,
-      child: AnimatedSwitcher(
+    return Selector<PaymentCardProvider, bool>(
+      selector: (_, p) => p.showFrontSide,
+      builder: (_, value, __) => AnimatedSwitcher(
         duration: const Duration(milliseconds: 800),
         transitionBuilder: _transitionBuilder,
         layoutBuilder: (widget, list) => Stack(children: [widget!, ...list]),
-        child:
-            _showFrontSide ? const FrontCardWidget() : const BackCardWidget(),
+        child: value
+                ? const FrontCardWidget()
+                : const BackCardWidget(),
         switchInCurve: Curves.easeIn,
         switchOutCurve: Curves.easeIn.flipped,
       ),
@@ -130,9 +129,7 @@ class _PaymentCardPageState extends State<PaymentCardPage> {
         _cardNumberNode.unfocus();
         _nameNode.requestFocus();
       },
-      onTap: () {
-        print("on Tap");
-      },
+      onTap: () => _switchCard(isFront: true),
       onChanged: Provider.of<PaymentCardProvider>(context, listen: false).onCardNumberChanged,
       textCapitalization: TextCapitalization.words,
       autofocus: false,
@@ -162,9 +159,7 @@ class _PaymentCardPageState extends State<PaymentCardPage> {
         _nameNode.unfocus();
         _expDateNode.requestFocus();
       },
-      onTap: () {
-        print("on Tap");
-      },
+      onTap: () => _switchCard(isFront: true),
       onChanged: Provider.of<PaymentCardProvider>(context, listen: false).onNameChanged,
       textCapitalization: TextCapitalization.words,
       autofocus: false,
@@ -191,9 +186,7 @@ class _PaymentCardPageState extends State<PaymentCardPage> {
         _expDateNode.unfocus();
         _cvvCodeNode.requestFocus();
       },
-      onTap: () {
-        print("on Tap");
-      },
+      onTap: () => _switchCard(isFront: true),
       onChanged: (String value) {
         if (value.trim().length == 2) {
           if (!Provider.of<PaymentCardProvider>(context, listen: false).expDate.endsWith("/")) {
@@ -232,9 +225,7 @@ class _PaymentCardPageState extends State<PaymentCardPage> {
       onFieldSubmitted: (s) {
         _cvvCodeNode.unfocus();
       },
-      onTap: () {
-        print("on Tap");
-      },
+      onTap: () => _switchCard(isFront: false),
       onChanged: Provider.of<PaymentCardProvider>(context, listen: false).onCvvCodeChanged,
       textCapitalization: TextCapitalization.words,
       autofocus: false,
